@@ -1,0 +1,153 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html> 
+	<head> 
+		<title>Request Processing</title> 
+		<link rel="stylesheet" href="/form/css/default.css" />
+				<script type="text/javascript" src="/form/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript">
+			var warnclose = '';
+			var message = 'Please do not close this page. Closing this page will interrupt the search, and we will not be able to guarantee you are matched with the lender with the lowest possible rates.';
+
+            window.ignoreOnUnload = false;
+            window.onbeforeunload = function (e){
+                if (!window.ignoreOnUnload) {
+                    //Log that the user tried to close their window
+                    $.ajax({url: '../route.php?action=log-action&action-to-log=attempted-close-window&tracking_code=9747411324-1596211868',cache: false});
+
+                    var e = e || window.event;
+                    if(warnclose != 'false')
+                    {
+                        if (e) e.returnValue = message;// Alert for IE & FF < 4
+                        return message;// Alert for newer webkit browsers
+                    }
+                }
+			}
+		</script>
+        		</head> 
+	<body class="tpl-processing"> 
+<script type="text/javascript">
+	function redirect(){
+		//does nothing!
+	}
+	function getStatus(){
+		gAjaxes.push($.ajax({
+			url: '../route.php?action=check-submitted&tracking_code=9747411324-1596211868&ieNoCache='+ new Date().getTime(),
+			cache: false,
+			success: function(data)
+			{
+				if(data == '1')
+				{
+					$.each(gAjaxes, function (i, d) {
+						d.abort();
+					});
+
+					clearInterval(gInterval);
+					window.onbeforeunload = function(){};
+                    top.location.href='redirect.php?p=&warnclose=' + warnclose + '&t=9747411324-1596211868&city=&state=&zip=&firstname=&lastname=&email=';
+					$('#redirectLink a').attr('href','redirect.php?warnclose=' + warnclose + '&t=9747411324-1596211868&city='+''+'&state='+''+'&zip='+'&firstname=&lastname=&email=');
+					$('#main').hide();
+					$('#redirectLink').show();
+				}
+				else if(data == '2'){
+					$.each(gAjaxes, function (i, d) {
+						d.abort();
+					});
+
+					clearInterval(gInterval);
+					window.onbeforeunload = function(){};
+					top.location.href='/form/thank-you.php';
+					$('#main').hide();
+					$('#redirectLink').show();
+				}
+			}
+		}));
+	}
+
+	$(document).ready(function() {
+		gInterval = setInterval(getStatus, 3000);
+        getStatus();
+        $("a.gm").on('click', function(ev){
+            window.ignoreOnUnload = true;
+            setTimeout(function(){window.ignoreOnUnload = false;}, 300);
+        });
+	});
+
+	gInterval = false;
+	gAjaxes = [];
+</script>
+<style>
+    .tpl-processing #processing h2.secondary-title{
+        font-weight:normal;
+        color:#000;
+        font-size: 34px;
+    }
+    .tpl-processing #processing h3.do-not-close{
+        color:#000;
+        margin: -12px auto 34px;
+        line-height: 1.4em;
+        font-size:23px;
+    }
+    .search-label{
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 1em;
+    }
+    .tpl-processing #processing h3.email-disclaimer{
+        text-align:left;
+        line-height: 1.4em;
+        font-size: 23px;
+        color:#B0313A;
+        margin-bottom: 59px;
+    }
+    .tpl-processing #processing h3.email-disclaimer a.gm{
+        color: #B0313A;
+        font-size: 23px;
+        line-height: 1.4em;
+    }
+</style>
+
+
+	<h1 id="processing-header">Search</h1> 
+	<div id="processing">
+		<span id="main">
+            <h2 class="secondary-title">Your Request is Processing...</h2>
+            <h3 class="do-not-close">Do not close this window. It may take a few minutes.</h3>
+            <div class="search-label">Searching...</div>
+            <div class="dot-loader"></div>
+
+            <h4 class="tracking">Tracking Code: <span class="tracking-number">9747411324-1596211868</span></h4>
+                        <h3 class="email-disclaimer">IMPORTANT! Please check your email inbox and spam folder for a message with your account details. Please mark our emails as "NOT SPAM" so you are able to receive important notifications.</h3>
+
+            <h5>Your request process has begun. We are not a lender. We will connect you with our advertiser shortly. Closing this window will interrupt the request, and we will not be able to continue the process. If you wish to cancel your request, you must wait to be redirected to the advertiser page, at which point you will be required to cancel the request directly with them.</h5>
+            <div class="privacy-seals"></div>
+		</span>
+		<div id="redirectLink" class="hide">
+            <a href="redirect.php?t=9747411324-1596211868">
+                If you are not redirected please click here to continue
+            </a>
+        </div>
+	</div><!-- #processing -->
+
+
+
+        <script>(function() {
+var _fbq = window._fbq || (window._fbq = []);
+if (!_fbq.loaded) {
+var fbds = document.createElement('script');
+fbds.async = true;
+fbds.src = '//connect.facebook.net/en_US/fbds.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(fbds, s);
+_fbq.loaded = true;
+}
+_fbq.push(['addPixelId', '1558220654416218']);
+})();
+window._fbq = window._fbq || [];
+window._fbq.push(['track', 'PixelInitialized', {}]);
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?id=1558220654416218&amp;ev=PixelInitialized" /></noscript>
+
+
+	</body> 
+</html> 
